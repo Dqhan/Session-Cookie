@@ -6,17 +6,23 @@ var cookie = require('cookie-parser');
 var User = require('./schemas/user');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var MongoStore = require('connect-mongo')(session);
 var app = express();
 
 app.use('/', express.static(__dirname));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('trust proxy', 1);
-app.use(cookie('test'));
+app.use(cookie('express_cookie'));
 app.use(session({
-    secret: 'test',
-    resave: true,
-    saveUninitialized: false,
-    cookie: { maxAge: 60000 }
+    secret: 'express_cookie',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 60 * 1000 * 30 },
+    rolling: true,
+    store: new MongoStore({
+        url: 'mongodb://localhost:27107/test',
+        collection: 'sessions'
+    })
 }));
 
 app.post('/login', function (req, res) {
@@ -38,7 +44,8 @@ app.post('/login', function (req, res) {
 })
 
 app.get('/userInfo', function (req, res) {
-    req.session;
+    if (req.session.userInfo) console.log('login successfully');
+    else console.log('session timeout.');
 })
 
 app.post('/register', function (req, res) {
@@ -74,7 +81,13 @@ app.post('/register', function (req, res) {
         })
 })
 
-  app.listen(8888, () => console.log('listening on port 8888.'))
+mongoose.connect('mongodb://127.0.0.1:27017/test', function (err) {
+    if (err) {
+        console.log(err, 'error');
+        return;
+    }
+    app.listen(8888, () => console.log('listening on port 8888.'))
+})
 
 
 module.exports = app;

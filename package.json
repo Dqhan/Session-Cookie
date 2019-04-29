@@ -28,6 +28,7 @@
     "babel-preset-react": "^6.24.1",
     "body-parser": "^1.18.3",
     "connect-busboy": "0.0.2",
+    "connect-mongo": "^2.0.3",
     "cookie-parser": "^1.4.4",
     "crypto": "^1.0.1",
     "css-loader": "^0.28.11",

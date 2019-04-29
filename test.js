@@ -1,5 +1,4 @@
 window.onload = function () {
-
     (function () {
         var xhr = new XMLHttpRequest();
         var url = './userInfo';
